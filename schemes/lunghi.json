@@ -1,0 +1,233 @@
+{
+  "attackFormation": "pari",
+  "defenseStyle": "m",
+  "speed": "0.7",
+  "entities": [
+    {
+      "id": "A1",
+      "type": "player",
+      "team": "attack",
+      "role": "boa",
+      "x": 300,
+      "y": 85,
+      "origin": {
+        "x": 300,
+        "y": 85
+      },
+      "timeline": []
+    },
+    {
+      "id": "A2",
+      "type": "player",
+      "team": "attack",
+      "role": "2",
+      "x": 90,
+      "y": 85,
+      "origin": {
+        "x": 90,
+        "y": 85
+      },
+      "timeline": []
+    },
+    {
+      "id": "A6",
+      "type": "player",
+      "team": "attack",
+      "role": "6",
+      "x": 510,
+      "y": 85,
+      "origin": {
+        "x": 510,
+        "y": 85
+      },
+      "timeline": []
+    },
+    {
+      "id": "A3",
+      "type": "player",
+      "team": "attack",
+      "role": "3",
+      "x": 164.9853057861328,
+      "y": 119.69007110595703,
+      "origin": {
+        "x": 195,
+        "y": 150
+      },
+      "timeline": [
+        {
+          "type": "move",
+          "to": {
+            "x": 172.9777374267578,
+            "y": 127.68248748779297
+          },
+          "duration": 0.24
+        },
+        {
+          "type": "move",
+          "to": {
+            "x": 164.9853057861328,
+            "y": 119.69007110595703
+          },
+          "duration": 0.2
+        }
+      ]
+    },
+    {
+      "id": "A5",
+      "type": "player",
+      "team": "attack",
+      "role": "5",
+      "x": 432.1603088378906,
+      "y": 123.686279296875,
+      "origin": {
+        "x": 405,
+        "y": 150
+      },
+      "timeline": [
+        {
+          "type": "move",
+          "to": {
+            "x": 432.1603088378906,
+            "y": 123.686279296875
+          },
+          "duration": 0.29
+        }
+      ]
+    },
+    {
+      "id": "A4",
+      "type": "player",
+      "team": "attack",
+      "role": "4",
+      "x": 300.2854309082031,
+      "y": 222.44969177246094,
+      "origin": {
+        "x": 300,
+        "y": 175
+      },
+      "timeline": [
+        {
+          "type": "move",
+          "to": {
+            "x": 300.2854309082031,
+            "y": 222.44969177246094
+          },
+          "duration": 0.37
+        }
+      ]
+    },
+    {
+      "id": "ball",
+      "type": "ball",
+      "team": null,
+      "role": null,
+      "x": 281.4461669921875,
+      "y": 13.415830612182617,
+      "origin": {
+        "x": 299.14373779296875,
+        "y": 224.73329162597656
+      },
+      "timeline": [
+        {
+          "type": "wait",
+          "duration": 0.5
+        },
+        {
+          "type": "pass",
+          "target": "A3",
+          "to": {
+            "x": 164.9853057861328,
+            "y": 119.69007110595703
+          },
+          "duration": 0.66
+        },
+        {
+          "type": "shot",
+          "to": {
+            "x": 281.4461669921875,
+            "y": 13.415830612182617
+          },
+          "duration": 0.38
+        }
+      ]
+    },
+    {
+      "id": "D1",
+      "type": "player",
+      "team": "defense",
+      "role": "1",
+      "x": 300,
+      "y": 65,
+      "origin": {
+        "x": 300,
+        "y": 65
+      },
+      "timeline": []
+    },
+    {
+      "id": "D2",
+      "type": "player",
+      "team": "defense",
+      "role": "2",
+      "x": 109,
+      "y": 80,
+      "origin": {
+        "x": 109,
+        "y": 80
+      },
+      "timeline": []
+    },
+    {
+      "id": "D6",
+      "type": "player",
+      "team": "defense",
+      "role": "6",
+      "x": 491,
+      "y": 80,
+      "origin": {
+        "x": 491,
+        "y": 80
+      },
+      "timeline": []
+    },
+    {
+      "id": "D3",
+      "type": "player",
+      "team": "defense",
+      "role": "3",
+      "x": 247.5,
+      "y": 162.5,
+      "origin": {
+        "x": 247.5,
+        "y": 162.5
+      },
+      "timeline": []
+    },
+    {
+      "id": "D5",
+      "type": "player",
+      "team": "defense",
+      "role": "5",
+      "x": 352.5,
+      "y": 162.5,
+      "origin": {
+        "x": 352.5,
+        "y": 162.5
+      },
+      "timeline": []
+    },
+    {
+      "id": "D4",
+      "type": "player",
+      "team": "defense",
+      "role": "4",
+      "x": 300,
+      "y": 105,
+      "origin": {
+        "x": 300,
+        "y": 105
+      },
+      "timeline": []
+    }
+  ]
+}

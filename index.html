@@ -116,11 +116,10 @@
       </div>
       <div id="schemesList"><span id="emptySchemes">Nessuno schema salvato</span></div>
       <div class="row">
-        <button id="exportScheme">⬇ Esporta</button>
         <button id="importScheme">⬆ Importa</button>
+        <button id="pickFolder">📁 Collega cartella</button>
         <input type="file" id="importFile" accept="application/json" style="display:none">
       </div>
-      <div id="libraryList"></div>
       <button id="newScheme">🗑 Nuovo (reset formazioni)</button>
     </div>
 
@@ -636,12 +635,15 @@
     updateFormationButtons();
   }
 
+  let schemesDirHandle = null;
+  let libraryItems = [];
+
   function refreshSchemesList(){
     const list = document.getElementById("schemesList");
-    const data = loadStorage(); const names = Object.keys(data);
+    const data = loadStorage(); const names = Object.keys(data).sort();
     list.innerHTML="";
-    if (!names.length){ list.innerHTML='<span id="emptySchemes">Nessuno schema salvato</span>'; return; }
-    names.sort().forEach(name=>{
+    if (!names.length && !libraryItems.length){ list.innerHTML='<span id="emptySchemes">Nessuno schema salvato</span>'; return; }
+    names.forEach(name=>{
       const chip=document.createElement("div"); chip.className="scheme-chip";
       const span=document.createElement("span"); span.className="name"; span.textContent=name; span.title="Carica \""+name+"\"";
       span.addEventListener("click", ()=>loadFromData(data[name]));
@@ -649,22 +651,45 @@
       del.addEventListener("click",(ev)=>{ ev.stopPropagation(); const d=loadStorage(); delete d[name]; writeStorage(d); refreshSchemesList(); });
       chip.appendChild(span); chip.appendChild(del); list.appendChild(chip);
     });
+    libraryItems.forEach(item=>{
+      if (data[item.name]) return;
+      const chip=document.createElement("div"); chip.className="scheme-chip";
+      const span=document.createElement("span"); span.className="name"; span.textContent=item.name; span.title="Carica \""+item.name+"\"";
+      span.addEventListener("click", ()=>{
+        fetch("schemes/"+item.file).then(r=>r.json()).then(loadFromData).catch(()=>alert("Impossibile caricare "+item.file));
+      });
+      chip.appendChild(span); list.appendChild(chip);
+    });
   }
-  document.getElementById("save").addEventListener("click", ()=>{
+
+  async function updateIndexJson(name, filename){
+    let list = [];
+    try{
+      const fh = await schemesDirHandle.getFileHandle("index.json");
+      list = JSON.parse(await (await fh.getFile()).text());
+    } catch(e){}
+    const i = list.findIndex(x=>x.file===filename);
+    if (i>=0) list[i] = {name, file:filename}; else list.push({name, file:filename});
+    const fh2 = await schemesDirHandle.getFileHandle("index.json", {create:true});
+    const w = await fh2.createWritable(); await w.write(JSON.stringify(list, null, 2)); await w.close();
+    libraryItems = list; refreshSchemesList();
+  }
+
+  document.getElementById("save").addEventListener("click", async ()=>{
     const input=document.getElementById("schemeName"); const name=input.value.trim();
     if (!name){ input.focus(); return; }
     const data=loadStorage(); data[name]=serialize(); writeStorage(data);
+    if (schemesDirHandle){
+      try{
+        const filename = name.replace(/\s+/g,"-").toLowerCase()+".json";
+        const fh = await schemesDirHandle.getFileHandle(filename, {create:true});
+        const w = await fh.createWritable(); await w.write(JSON.stringify(data[name], null, 2)); await w.close();
+        await updateIndexJson(name, filename);
+      } catch(e){}
+    }
     input.value=""; refreshSchemesList();
   });
 
-  document.getElementById("exportScheme").addEventListener("click", ()=>{
-    const name = document.getElementById("schemeName").value.trim() || "schema";
-    const blob = new Blob([JSON.stringify(serialize(), null, 2)], {type:"application/json"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = name + ".json"; a.click();
-    URL.revokeObjectURL(url);
-  });
   document.getElementById("importScheme").addEventListener("click", ()=>{
     document.getElementById("importFile").click();
   });
@@ -679,19 +704,15 @@
     ev.target.value = "";
   });
 
-  function renderLibrary(list){
-    const box = document.getElementById("libraryList");
-    box.innerHTML = "";
-    list.forEach(item=>{
-      const chip=document.createElement("div"); chip.className="scheme-chip";
-      const span=document.createElement("span"); span.className="name"; span.textContent=item.name; span.title="Carica \""+item.name+"\"";
-      span.addEventListener("click", ()=>{
-        fetch("schemes/"+item.file).then(r=>r.json()).then(loadFromData).catch(()=>alert("Impossibile caricare "+item.file));
-      });
-      chip.appendChild(span); box.appendChild(chip);
-    });
-  }
-  fetch("schemes/index.json").then(r=>r.json()).then(renderLibrary).catch(()=>{});
+  document.getElementById("pickFolder").addEventListener("click", async ()=>{
+    if (!window.showDirectoryPicker){ alert("Il tuo browser non supporta il salvataggio diretto su cartella (usa Chrome/Edge)."); return; }
+    try{
+      schemesDirHandle = await window.showDirectoryPicker();
+      document.getElementById("pickFolder").textContent = "📁 Cartella collegata";
+    } catch(e){}
+  });
+
+  fetch("schemes/index.json").then(r=>r.json()).then(list=>{ libraryItems=list; refreshSchemesList(); }).catch(()=>{});
 
   drawField();
   refreshSchemesList();
